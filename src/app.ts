@@ -1,4 +1,5 @@
 import {launchServer} from "./server.ts";
 
-
-launchServer();
+(async () => {
+    await launchServer();
+})();

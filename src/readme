@@ -1,0 +1,3 @@
+1) Changed functions restoreDataFromFile() and saveDataToFile().
+Functions weren't async, so the streams were never closed and restoreDataFromFile()  never got return. Moreover ws.end was inside ws.finish so it didn't finished.
+2) Changed launchServer() func. Wasn't async.

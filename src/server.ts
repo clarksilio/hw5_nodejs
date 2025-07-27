@@ -5,9 +5,9 @@ import {UserController} from "./controllers/UserController.ts";
 import {UserServiceEmbeddedImpl} from "./service/UserServiceEmbeddedImpl.ts";
 import {myLogger} from "./utils/logger.ts";
 
-export const launchServer = () => {
+export const launchServer = async () => {
     const userService = new UserServiceEmbeddedImpl();
-    userService.restoreDataFromFile();
+    await userService.restoreDataFromFile();
     const userController:UserController = new UserController(userService);
 
     createServer(async (req, res) => {

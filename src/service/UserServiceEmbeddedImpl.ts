@@ -41,53 +41,22 @@ export  class UserServiceEmbeddedImpl implements UserService, UserFilePersistenc
         this.users[index] = newUser;
     }
 
-    async restoreDataFromFile(): Promise<string> {
+
+
+         restoreDataFromFile(): Promise<void> {
         return new Promise((resolve, reject) => {
-            let result = "";
-
-            this.rs.on('data', (chunk) => {
-                if (chunk) {
-                    console.log("Got chunk");
-                    result += chunk.toString();
-                }
-            });
-
-            this.rs.on('end', () => {
-                try {
-                    if (result) {
-                        this.users = JSON.parse(result);
-                        myLogger.log("Data was restored from file");
-                        myLogger.save("Data was restored from file");
-                    } else {
-                        this.users = [{ id: 123, userName: "Panikovsky" }];
-                    }
-                    this.rs.close();
-                    resolve("Ok");
-                } catch (e) {
-                    myLogger.log("JSON parse error: " + (e as Error).message);
-                    this.users = [{ id: 456, userName: "ParserErrorFallback" }];
-                    resolve("Recovered with fallback after parse error");
-                }
-            });
-
-            this.rs.on('error', (err) => {
-                this.users = [{ id: 2, userName: "Bender" }];
-                myLogger.log("File to restore not found or read error: " + err.message);
-                resolve("Recovered with fallback after read error");
-            });
-        });
-    }
-
-    restoreDataFromFile1(): string {
         let result = ""
         this.rs.on('data', (chunk) => {
             if(chunk){
-                console.log("Got chunk")
                 result += chunk.toString()
+
             } else {
                 result = "[]";
+                reject()
             }
-        })
+
+        }
+        )
 
         this.rs.on('end', () => {
             if(result){
@@ -98,65 +67,42 @@ export  class UserServiceEmbeddedImpl implements UserService, UserFilePersistenc
             }else {
                 this.users = [{id: 123, userName: "Panikovsky"}]
             }
+            resolve()
         })
 
         this.rs.on('error', () => {
             this.users = [{id: 2, userName: "Bender"}]
             myLogger.log('File to restore not found')
+            resolve()
         })
-        return "Ok";
+    })
     }
 
-    async saveDataToFile(): Promise<string> {
+
+    saveDataToFile(): Promise<void> {
         return new Promise((resolve, reject) => {
-            const ws = fs.createWriteStream('data.txt', { flags: 'w' });
-            myLogger.log("WriteStream created");
-
+            const ws = fs.createWriteStream('data.txt', {flags: "w"});
             const data = JSON.stringify(this.users);
-            myLogger.log("Data to save: " + data);
 
-            ws.write(data, (err) => {
-                if (err) {
-                    myLogger.log("Write error: " + err.message);
-                    reject("Error writing to file");
-                    return;
+            ws.write(data, (e) => {
+                if (e) {
+                    myLogger.log("Error: " + e.message);
+                    reject(e);
+                } else {
+                    ws.end();
                 }
-                ws.end(); // Завершаем запись
             });
 
             ws.on('finish', () => {
                 myLogger.log("Data was saved to file");
                 myLogger.save("Data was saved to file");
-                resolve("Ok");
+                resolve();
             });
 
             ws.on('error', (err) => {
-                myLogger.log("Stream error: " + err.message);
-                reject("Stream error");
+                myLogger.log("error: data not saved! " + err.message);
+                reject(err);
             });
         });
-    }
-
-
-
-    async saveDataToFile1(): Promise<string> {
-
-        const ws = fs.createWriteStream('data.txt', {flags: "w"})
-        myLogger.log("Ws created")
-        const data = JSON.stringify(this.users);
-        myLogger.log(data)
-        ws.write((data), (e) => {
-            if(e)
-            myLogger.log("Error!" + e?.message)
-        })
-        ws.on('finish', () => {
-            myLogger.log("Data was saved to file");
-            myLogger.save("Data was saved to file");
-            ws.end();
-        })
-        ws.on('error', () => {
-            myLogger.log("error: data not saved!")
-        })
-        return "Ok";
     }
 }

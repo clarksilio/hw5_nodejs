@@ -1,5 +1,5 @@
 
 export interface UserFilePersistenceService {
-    saveDataToFile():Promise<string>;
-    restoreDataFromFile():Promise<string>;
+    saveDataToFile():void;
+    restoreDataFromFile():void;
 }
