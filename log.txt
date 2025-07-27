@@ -1,1 +1,1 @@
-[{"date":"2025-07-25T14:34:48.771Z","message":"Data was restored from file"},{"date":"2025-07-25T14:35:26.159Z","message":"User with id 112 was added"},{"date":"2025-07-25T14:35:34.156Z","message":"Data was saved to file"},{"date":"2025-07-25T14:35:34.157Z","message":"Server shutdown by Ctrl+C"}]
+[{"date":"2025-07-27T18:32:12.006Z","message":"Data was restored from file"},{"date":"2025-07-27T18:32:16.346Z","message":"Data was saved to file"},{"date":"2025-07-27T18:32:16.347Z","message":"Server shutdown by Ctrl+C"}]
